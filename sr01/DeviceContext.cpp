@@ -2,6 +2,7 @@
 #include<algorithm>
 
 namespace easym {
+	static int cnt = 0;
 	DeviceContext::DeviceContext()
 	{
 	}
@@ -16,7 +17,8 @@ namespace easym {
 	}
 	void DeviceContext::DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT startVertexLocation)
 	{
-		for (int i = startIndexLocation; i < indexCount / 3; i++) {
+		
+		for (UINT i = startIndexLocation; i < indexCount / 3; i++) {
 			VertexIn p1 = m_vertices[startVertexLocation + m_indices[i * 3]];
 			VertexIn p2 = m_vertices[startVertexLocation + m_indices[i * 3 + 1]];
 			VertexIn p3 = m_vertices[startVertexLocation + m_indices[i * 3 + 2]];
@@ -43,6 +45,7 @@ namespace easym {
 			DrawTriangle(v1, v2, v3);
 
 		}
+		
 	}
 	void DeviceContext::ToCVV(VertexOut & v)
 	{
@@ -66,7 +69,7 @@ namespace easym {
 	{
 		assert(m_pShader);
 		VertexOut out = m_pShader->VS(v);
-
+		out.oneDivZ = 1 / out.posH.w;
 		out.tex /= out.posH.w;
 		return out;
 	}
@@ -93,26 +96,26 @@ namespace easym {
 	{
 		if (v1.posH.y == v2.posH.y) {
 			if (v3.posH.y <= v1.posH.y) {
-				DrawTriangleTop(v1, v2, v3);
+				DrawTriangleBottom(v3, v2, v1);
 			}
 			else {
-				DrawTriangleBottom(v1, v2, v3);
+				DrawTriangleTop(v1, v2, v3);
 			}
 		}
 		else if (v1.posH.y == v3.posH.y) {
 			if (v2.posH.y <= v1.posH.y) {
-				DrawTriangleTop(v3, v1, v2);
+				DrawTriangleBottom(v2, v1, v3);
 			}
 			else {
-				DrawTriangleBottom(v3, v1, v2);
+				DrawTriangleTop(v1, v3, v2);
 			}
 		}
 		else if (v2.posH.y == v3.posH.y) {
 			if (v1.posH.y <= v2.posH.y) {
-				DrawTriangleTop(v2, v3, v1);
+				DrawTriangleBottom(v1, v2, v3);
 			}
 			else {
-				DrawTriangleBottom(v2, v3, v1);
+				DrawTriangleTop(v2, v3, v1);
 			}
 		}
 		else {
@@ -121,10 +124,11 @@ namespace easym {
 			std::sort(vertex.begin(), vertex.end(), [](const VertexOut& v1,const VertexOut& v2) {
 				return v1.posH.y < v2.posH.y;
 			});
-			real t = (vertex[1].posH.y - vertex[0].posH.x) / (vertex[2].posH.y - vertex[0].posH.y);
+			real t = (vertex[1].posH.y - vertex[0].posH.y) / (vertex[2].posH.y - vertex[0].posH.y);
 			VertexOut middle = Lerp(vertex[0], vertex[2], t);
-			DrawTriangleBottom(middle, vertex[1], vertex[0]);
 			DrawTriangleTop(vertex[1], middle, vertex[2]);
+			DrawTriangleBottom(vertex[0], vertex[1], middle);
+			
 		}
 	}
 	void DeviceContext::DrawTriangleTop(const VertexOut & v1, const VertexOut & v2, const VertexOut & v3)
@@ -137,9 +141,12 @@ namespace easym {
 				real t = 0;
 				if(v3.posH.y!=v1.posH.y)
 					t = dy / (v3.posH.y - v1.posH.y);
-				VertexOut left = Lerp(v1, v3, t);
-				VertexOut right = Lerp(v2, v3, t);
-				ScanlineFill(left, right, yindex);
+				VertexOut p1 = Lerp(v1, v3, t);
+				VertexOut p2 = Lerp(v2, v3, t);
+				if(p1.posH.x<p2.posH.x)
+					ScanlineFill(p1, p2, yindex);
+				else
+					ScanlineFill(p2, p1, yindex);
 			}
 		}
 	}
@@ -147,15 +154,18 @@ namespace easym {
 	{
 		int height = m_pDevice->getClientHeight();
 		int dy = 0;
-		for (real vy = v1.posH.y; vy < v3.posH.y; vy -= 1, dy += 1) {
+		for (real vy = v1.posH.y; vy < v3.posH.y; vy += 1, dy += 1) {
 			int yindex = static_cast<int>(vy + static_cast<real>(0.5));
 			if (yindex >= 0 && yindex < height) {
 				real t = 0;
 				if (v3.posH.y != v1.posH.y)
 					t = dy / (v3.posH.y - v1.posH.y);
-				VertexOut right = Lerp(v1, v3, t);
-				VertexOut left = Lerp(v2, v3, t);
-				ScanlineFill(left, right, yindex);
+				VertexOut p1 = Lerp(v1, v3, t);
+				VertexOut p2 = Lerp(v1, v2, t);
+				if (p1.posH.x<p2.posH.x)
+					ScanlineFill(p1, p2, yindex);
+				else
+					ScanlineFill(p2, p1, yindex);
 			}
 		}
 	}
@@ -164,6 +174,7 @@ namespace easym {
 		int dx = 0;
 		int width = m_pDevice->GetClientWidth();
 		for (real vx = left.posH.x; vx <= right.posH.x; vx += 1, dx += 1) {
+			
 			int xindex = static_cast<int>(vx + static_cast<real>(0.5));
 			if (xindex >= 0 && xindex < width) {
 				real t = 0;
@@ -177,13 +188,14 @@ namespace easym {
 					vout.tex /= oneDivZ;
 
 					Vector4 color = m_pShader->PS(vout);
-
+					cnt++;
 					m_pDevice->DrawPixel(xindex, yIndex, color);
 				}
 				
 				
 			}
 		}
+		printf("%d\n", cnt);
 	}
 }
 

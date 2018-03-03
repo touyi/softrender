@@ -22,6 +22,7 @@
 HINSTANCE g_hInstance = 0;
 HWND  g_hWnd;
 std::string g_title = "EasyRender";
+
 int g_width = 800, g_height = 600;
 
 std::shared_ptr<Scene> g_pBoxDemo = std::make_shared<Scene>();
@@ -112,7 +113,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 //创建主窗口  
-HWND CreateMain(LPCSTR lpClassName, LPCSTR lpWndName)
+HWND CreateMain(LPCWSTR lpClassName, LPCWSTR lpWndName)
 {
 	RECT rc = { 0, 0, g_width, g_height };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, false);
@@ -122,7 +123,7 @@ HWND CreateMain(LPCSTR lpClassName, LPCSTR lpWndName)
 }
 
 //注册窗口类  
-BOOL Register(LPSTR lpClassName, WNDPROC wndProc)
+BOOL Register(LPWSTR lpClassName, WNDPROC wndProc)
 {
 	WNDCLASSEX wce = { 0 };
 	wce.cbSize = sizeof(wce);
@@ -179,20 +180,20 @@ int WINAPI wWinMain(HINSTANCE hInstance,   //当前程序实例句柄
 	_In_ int nShowCmd)                     //窗口的显示方式
 {
 
-	/*AllocConsole();
+	AllocConsole();
 	freopen("conout$", "w", stdout);
 
 	g_hInstance = hInstance;
-	BOOL nRet = Register("Main", WndProc);
+	BOOL nRet = Register(TEXT("Main"), WndProc);
 	if (!nRet)
 	{
-		MessageBox(NULL, "注册失败", "Infor", MB_OK);
+		MessageBox(NULL, TEXT("注册失败"), TEXT("Infor"), MB_OK);
 		return 0;
 	}
-	g_hWnd = CreateMain("Main", g_title.c_str());
+	g_hWnd = CreateMain(TEXT("Main"), TEXT("EasyRender"));
 
 	Display(g_hWnd);
-	Message();*/
+	Message();
 	return 0;
 }
 
