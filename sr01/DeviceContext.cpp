@@ -129,12 +129,61 @@ namespace easym {
 	}
 	void DeviceContext::DrawTriangleTop(const VertexOut & v1, const VertexOut & v2, const VertexOut & v3)
 	{
+		int height = m_pDevice->getClientHeight();
+		real dy = 0;
+		for (real vy = v1.posH.y; vy < v3.posH.y; vy+=1,dy+=1) {
+			int yindex = static_cast<int>(vy + static_cast<real>(0.5));
+			if (yindex >= 0 && yindex < height) {
+				real t = 0;
+				if(v3.posH.y!=v1.posH.y)
+					t = dy / (v3.posH.y - v1.posH.y);
+				VertexOut left = Lerp(v1, v3, t);
+				VertexOut right = Lerp(v2, v3, t);
+				ScanlineFill(left, right, yindex);
+			}
+		}
 	}
 	void DeviceContext::DrawTriangleBottom(const VertexOut & v1, const VertexOut & v2, const VertexOut & v3)
 	{
+		int height = m_pDevice->getClientHeight();
+		int dy = 0;
+		for (real vy = v1.posH.y; vy < v3.posH.y; vy -= 1, dy += 1) {
+			int yindex = static_cast<int>(vy + static_cast<real>(0.5));
+			if (yindex >= 0 && yindex < height) {
+				real t = 0;
+				if (v3.posH.y != v1.posH.y)
+					t = dy / (v3.posH.y - v1.posH.y);
+				VertexOut right = Lerp(v1, v3, t);
+				VertexOut left = Lerp(v2, v3, t);
+				ScanlineFill(left, right, yindex);
+			}
+		}
 	}
 	void DeviceContext::ScanlineFill(const VertexOut & left, const VertexOut & right, int yIndex)
 	{
+		int dx = 0;
+		int width = m_pDevice->GetClientWidth();
+		for (real vx = left.posH.x; vx <= right.posH.x; vx += 1, dx += 1) {
+			int xindex = static_cast<int>(vx + static_cast<real>(0.5));
+			if (xindex >= 0 && xindex < width) {
+				real t = 0;
+				if (left.posH.x != right.posH.x) {
+					t = dx / (right.posH.x - left.posH.x);
+				}
+				real oneDivZ = Lerp(left.oneDivZ, right.oneDivZ, t);
+				if (oneDivZ > m_pDevice->GetZ(xindex, yIndex)) {
+					m_pDevice->SetZ(xindex,yIndex,oneDivZ);
+					VertexOut vout = Lerp(left, right, t);
+					vout.tex /= oneDivZ;
+
+					Vector4 color = m_pShader->PS(vout);
+
+					m_pDevice->DrawPixel(xindex, yIndex, color);
+				}
+				
+				
+			}
+		}
 	}
 }
 
