@@ -45,6 +45,12 @@
     <ClCompile Include="DeviceContext.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BoxShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Matrix.h">
@@ -75,6 +81,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="DeviceContext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

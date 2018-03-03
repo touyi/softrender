@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GeneratorMesh.h"
-// #include "DeviceContext.h"
+#include "DeviceContext.h"
 #include "MathDefine.h"
 #include "Texture2D.h"
 #include "Device.h"
@@ -9,7 +9,7 @@
 #include "Matrix.h"
 #include "Mesh.h"
 #include "Utils.h"
-// #include "Scene.h"
+#include "Scene.h"
 #include <windows.h>
 #include <windowsx.h>
 #include <memory.h>
@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <tchar.h>
 #include <string>
-#if 0
+
 HINSTANCE g_hInstance = 0;
 HWND  g_hWnd;
 std::string g_title = "EasyRender";
@@ -173,7 +173,6 @@ void Message()
 		}
 	}
 }
-#endif
 int WINAPI wWinMain(HINSTANCE hInstance,   //当前程序实例句柄
 	_In_opt_ HINSTANCE hPrevInstance,      //当前程序前一个程序实例句柄
 	_In_ LPWSTR lpCmdLine,                 //命令行参数

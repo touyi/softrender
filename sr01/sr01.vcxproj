@@ -147,24 +147,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseShader.cpp" />
+    <ClCompile Include="BoxShader.cpp" />
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="DeviceContext.cpp" />
     <ClCompile Include="GeneratorMesh.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseShader.h" />
+    <ClInclude Include="BoxShader.h" />
     <ClInclude Include="Device.h" />
     <ClInclude Include="DeviceContext.h" />
     <ClInclude Include="GeneratorMesh.h" />
     <ClInclude Include="MathDefine.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Vector.h" />
