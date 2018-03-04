@@ -29,6 +29,7 @@ namespace easym {
 	}
 	real Device::GetZ(int x, int y) const
 	{
+		
 		if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
 			return m_zBuffer[x][y];
 		}
@@ -48,6 +49,7 @@ namespace easym {
 			for (int i = 0; i < m_width; i++) {
 				for (int j = 0; j < m_height; j++) {
 					m_pFrameBuffer[j*m_width + i] = easym::color2Uint(color);
+					m_zBuffer[i][j] = 0;
 				}
 			}
 		}

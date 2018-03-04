@@ -2,9 +2,9 @@
 #include<algorithm>
 
 namespace easym {
-	static int cnt = 0;
 	DeviceContext::DeviceContext()
 	{
+
 	}
 
 
@@ -81,7 +81,7 @@ namespace easym {
 	{
 		Vector3 vec1 = v2.posH - v1.posH;
 		Vector3 vec2 = v3.posH - v2.posH;
-		Vector3 viewdir = v1.posH;
+		Vector3 viewdir = Vector3(0, 0, -1);
 		Vector3 cro = Cross(vec1, vec2);
 		if (Dot(cro, viewdir) > 0) {
 			return false;
@@ -188,14 +188,12 @@ namespace easym {
 					vout.tex /= oneDivZ;
 
 					Vector4 color = m_pShader->PS(vout);
-					cnt++;
 					m_pDevice->DrawPixel(xindex, yIndex, color);
 				}
 				
 				
 			}
 		}
-		printf("%d\n", cnt);
 	}
 }
 
